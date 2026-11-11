@@ -29,7 +29,7 @@ Reglas:
 
 ## DEC-001: Godot 4 con GDScript
 
-- Fecha: (rellena)
+- Fecha: 11/11/2026
 - Estado: Aceptada
 - Contexto: elegir motor y lenguaje para un roguelite 2D, primer proyecto grande.
 - Opciones consideradas:
@@ -42,7 +42,7 @@ Reglas:
 
 ## DEC-002: Lógica del Sudoku separada de la interfaz
 
-- Fecha: (rellena)
+- Fecha: 11/11/2026
 - Estado: Aceptada
 - Contexto: el generador de Sudoku es el núcleo del juego.
 - Decisión: la lógica vive en `src/logica/` y no usa nodos, escenas ni señales de la interfaz.
@@ -51,7 +51,14 @@ Reglas:
 
 ## DEC-003: Editor externo VS Code
 
-- Fecha: (rellena)
+- Fecha: 11/11/2026
 - Estado: Aceptada
 - Decisión: escribir código en VS Code con `godot-tools`; usar Godot para escenas y ejecución.
 - Motivo: es el editor con el que ya trabajo.
+
+## DEC-004: Logica primer iusses Tablero 9x9
+
+- Fecha: 11/11/2026
+- Estado: Aceptada
+- Decisión: El talbero es un array 2d, una lista de 9 filas y cada fila es una lista de 9 numeros, el 0 Significa celda vacia.
+- Motivo: De esta manera el array solo utiliza numeros y no un valor " Sin dato".

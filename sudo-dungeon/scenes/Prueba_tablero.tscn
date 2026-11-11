@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://bwq4ri66ysy4j"]
+
+[ext_resource type="Script" uid="uid://kewohjbnmxdn" path="res://src/pruebas/prueba_tablero.gd" id="1_yoh04"]
+
+[node name="Node" type="Node" unique_id=2126683078]
+script = ExtResource("1_yoh04")
