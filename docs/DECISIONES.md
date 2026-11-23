@@ -88,3 +88,16 @@ Reglas:
 - Decisión: opción 1. La función `rellenar` busca la primera celda vacía, prueba los números en orden aleatorio y, si se atasca, deshace y prueba otro.
 - Motivo: es el algoritmo más fácil de entender y de ajustar, y la velocidad es más que suficiente para un tablero 9x9. Importa más aprender y poder modificarlo que optimizarlo ahora.
 - Consecuencias: `rellenar` modifica el tablero en el sitio (los arrays se pasan por referencia en GDScript). El mismo mecanismo de contar soluciones se reutilizará para comprobar que el puzzle tiene solución única (issue 6). Si el rendimiento llegara a ser un problema, se podría pasar a la opción 3.
+
+## DEC-007: Puzzle a partir de una copia, quitando celdas de una lista barajada
+
+- Fecha: 2026-11-22
+- Estado: Aceptada
+- Contexto: hay que convertir el tablero completo (la solución) en un puzzle con algunas celdas vacías, que en el juego serán las salas ocultas "?". La solución original debe conservarse intacta, porque indica qué hay realmente en cada sala.
+- Opciones consideradas:
+  1. Copiar el tablero y vaciar celdas tomadas de una lista barajada con las 81 posiciones: nunca repite una celda, el número de pistas queda exacto y el código es corto.
+  2. Elegir celdas al azar una a una (fila y columna aleatorias) hasta vaciar las necesarias: hay que comprobar si la celda ya estaba vacía, y el número de intentos no está acotado.
+  3. Vaciar celdas en un patrón simétrico: los puzzles parecen más "diseñados", pero reduce la variedad y complica el código.
+- Decisión: opción 1. `crear_puzzle(solucion, pistas)` trabaja sobre `solucion.duplicate(true)` y vacía las primeras `81 - pistas` posiciones de una lista barajada. El número de pistas se limita con `clampi` al rango 0-81.
+- Motivo: garantiza el número exacto de pistas sin bucles de reintento, deja la solución sin tocar y permite ajustar la dificultad con un solo parámetro.
+- Consecuencias: quitar celdas al azar no asegura que el puzzle tenga una única solución. Eso se comprobará en el issue 6 con un contador de soluciones. Si se quisiera otra forma de elegir celdas (por ejemplo, simétrica), solo habría que cambiar cómo se construye la lista de posiciones.
