@@ -54,3 +54,36 @@ static func es_valido(tablero: Array, fila: int , col: int, num: int) -> bool:
 	
 	# Ninguna comprobación encontró el número: cabe
 	return true 
+
+static func buscar_celda_vacia(tablero: Array) -> Vector2i:
+	for f in range(TAMANO):
+		for c in range(TAMANO):
+			if tablero[f][c] == VACIA:
+				return Vector2i(f, c)
+	return Vector2i(-1, -1)
+
+static func rellenar(tablero: Array) -> bool:
+	var celda := buscar_celda_vacia(tablero)
+
+	# Caso base: no quedan celdas vacías, el tablero está completo
+	if celda.x == -1:
+		return true
+
+	# Los números 1-9 en orden aleatorio
+	var numeros: Array = range(1, TAMANO + 1)
+	numeros.shuffle()
+
+	for num in numeros:
+		if es_valido(tablero, celda.x, celda.y, num):
+			tablero[celda.x][celda.y] = num       # probamos este número
+			if rellenar(tablero):                 # paso recursivo
+				return true                       # todo lo demás encajó
+			tablero[celda.x][celda.y] = VACIA     # no funcionó: deshacemos
+
+	# Ningún número sirvió en esta celda: avisamos hacia atrás
+	return false
+
+static func generar_tablero_completo() -> Array:
+	var tablero := crear_tablero_vacio()
+	rellenar(tablero)
+	return tablero

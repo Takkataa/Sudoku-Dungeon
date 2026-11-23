@@ -62,3 +62,29 @@ Reglas:
 - Estado: Aceptada
 - Decisión: El talbero es un array 2d, una lista de 9 filas y cada fila es una lista de 9 numeros, el 0 Significa celda vacia.
 - Motivo: De esta manera el array solo utiliza numeros y no un valor " Sin dato".
+
+## DEC-005: Funciones de lógica como `static`
+
+- Fecha: 2026-11-22
+- Estado: Aceptada
+- Contexto: las funciones del Sudoku (`crear_tablero_vacio`, `imprimir_tablero`, `es_valido`...) trabajan con un tablero que reciben como dato y no necesitan guardar nada por sí solas.
+- Opciones consideradas:
+  1. Funciones `static`, que se llaman directamente como `Sudoku.es_valido(...)`: no hay que crear ningún objeto y la lógica queda separada de la interfaz. La clase no puede guardar estado propio.
+  2. Una clase normal con instancia (`var s = Sudoku.new()`): permitiría guardar el tablero dentro del objeto, pero obliga a crearlo y pasarlo por todas partes.
+  3. Un nodo con el script adjunto (autoload): accesible desde cualquier escena, pero la lógica pasaría a depender del motor y sería más difícil de probar sola.
+- Decisión: opción 1. La clase `Sudoku` solo contiene funciones `static` y constantes, y el tablero se pasa como parámetro.
+- Motivo: es lo más simple, no depende de nodos ni escenas (ver DEC-002), y se puede probar con una escena mínima. Además, un tablero es un dato que viaja entre funciones, no algo que la clase deba poseer.
+- Consecuencias: si una función llamada sin `static` no se encuentra, el análisis de Godot lo avisa (error `Static function ... not found`). Si más adelante hiciera falta guardar estado del piso (por ejemplo, salas visitadas), eso irá en otra clase aparte y no en `Sudoku`.
+
+## DEC-006: Generación del tablero por backtracking con orden aleatorio
+
+- Fecha: 2026-11-22
+- Estado: Aceptada
+- Contexto: hace falta generar un Sudoku completo y válido para cada piso, y que sea distinto en cada partida.
+- Opciones consideradas:
+  1. Backtracking recursivo probando los números 1-9 en orden aleatorio: sencillo, usa `es_valido` y siempre termina con un tablero correcto. Puede retroceder bastante en algunos casos.
+  2. Generar permutaciones de filas y corregir conflictos después: menos retrocesos, pero mucho más complejo de escribir y entender.
+  3. Partir de un tablero base fijo y transformarlo (intercambiar filas, columnas y dígitos): muy rápido, pero la variedad es limitada y se reconocen patrones.
+- Decisión: opción 1. La función `rellenar` busca la primera celda vacía, prueba los números en orden aleatorio y, si se atasca, deshace y prueba otro.
+- Motivo: es el algoritmo más fácil de entender y de ajustar, y la velocidad es más que suficiente para un tablero 9x9. Importa más aprender y poder modificarlo que optimizarlo ahora.
+- Consecuencias: `rellenar` modifica el tablero en el sitio (los arrays se pasan por referencia en GDScript). El mismo mecanismo de contar soluciones se reutilizará para comprobar que el puzzle tiene solución única (issue 6). Si el rendimiento llegara a ser un problema, se podría pasar a la opción 3.
