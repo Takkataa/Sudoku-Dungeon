@@ -14,7 +14,7 @@ Cada tarea se convierte en un Issue de GitHub asignado a su Milestone.
 
 | Versión | Hito | Estado |
 |---------|------|--------|
-| v0.1.0 | Lógica del Sudoku | ⬜ Pendiente |
+| v0.1.0 | Lógica del Sudoku | ✅ Completado |
 | v0.2.0 | Mapa visual | ⬜ Pendiente |
 | v0.3.0 | Navegación | ⬜ Pendiente |
 | v0.4.0 | Salas sin combate | ⬜ Pendiente |
