@@ -87,3 +87,25 @@ static func generar_tablero_completo() -> Array:
 	var tablero := crear_tablero_vacio()
 	rellenar(tablero)
 	return tablero
+
+# Devuelve una copia de "solucion" con solo "pistas" celdas visibles.
+# No modifica la solución original.
+static func crear_puzzle(solucion: Array, pistas: int) -> Array:
+	var total := TAMANO * TAMANO
+	pistas = clampi(pistas, 0, total)   # evita valores absurdos (negativos o > 81)
+
+	var puzzle: Array = solucion.duplicate(true)
+
+	# Lista con todas las posiciones, barajada
+	var posiciones: Array = []
+	for f in range(TAMANO):
+		for c in range(TAMANO):
+			posiciones.append(Vector2i(f, c))
+	posiciones.shuffle()
+
+	# Vaciamos las primeras (total - pistas) posiciones de la lista barajada
+	for i in range(total - pistas):
+		var pos: Vector2i = posiciones[i]
+		puzzle[pos.x][pos.y] = VACIA
+
+	return puzzle

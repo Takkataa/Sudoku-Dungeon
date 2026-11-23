@@ -4,7 +4,19 @@ extends Node
  
 # _ready() se ejecuta automáticamente cuando la escena arranca.
 func _ready() -> void:
-	var tablero := Sudoku.generar_tablero_completo()
-	Sudoku.imprimir_tablero(tablero)
-	
+	var solucion := Sudoku.generar_tablero_completo()
+	var puzzle := Sudoku.crear_puzzle(solucion, 20)
+
+	print("Solución:")
+	Sudoku.imprimir_tablero(solucion)
+	print("Puzzle (20 pistas):")
+	Sudoku.imprimir_tablero(puzzle)
+
+	# Contamos las pistas para comprobarlo
+	var pistas := 0
+	for fila in puzzle:
+		for valor in fila:
+			if valor != Sudoku.VACIA:
+				pistas += 1
+	print("Pistas en el puzzle: ", pistas)
  
