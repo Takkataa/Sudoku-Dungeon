@@ -160,3 +160,35 @@ static func crear_puzzle_unico(solucion: Array, pistas: int) -> Array:
 			puzzle[pos.x][pos.y] = anterior         # ya no es único: la restauramos
 
 	return puzzle
+
+# Un grupo (fila, columna o bloque) es válido si contiene exactamente 1..9.
+static func _grupo_valido(valores: Array) -> bool:
+	var copia: Array = valores.duplicate()
+	copia.sort()
+	var esperado: Array = range(1, TAMANO + 1)
+	return copia == esperado
+
+
+# Comprueba que un tablero completo cumple las reglas del Sudoku.
+static func es_tablero_valido(tablero: Array) -> bool:
+	# Filas y columnas
+	for i in range(TAMANO):
+		var fila: Array = []
+		var columna: Array = []
+		for j in range(TAMANO):
+			fila.append(tablero[i][j])
+			columna.append(tablero[j][i])
+		if not _grupo_valido(fila) or not _grupo_valido(columna):
+			return false
+
+	# Bloques 3x3: recorremos la esquina de cada bloque (0, 3, 6)
+	for bf in range(0, TAMANO, TAMANO_BLOQUE):
+		for bc in range(0, TAMANO, TAMANO_BLOQUE):
+			var bloque: Array = []
+			for f in range(bf, bf + TAMANO_BLOQUE):
+				for c in range(bc, bc + TAMANO_BLOQUE):
+					bloque.append(tablero[f][c])
+			if not _grupo_valido(bloque):
+				return false
+
+	return true

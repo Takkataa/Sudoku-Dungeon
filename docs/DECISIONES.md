@@ -117,3 +117,16 @@ Reglas:
 - Limitación conocida: el método es voraz (decide celda a celda sin mirar adelante) y depende del orden aleatorio, así que dos ejecuciones con el mismo objetivo pueden dar números de pistas distintos.
 - Uso en el juego: para saber cuántas pistas tiene realmente un puzzle, hay que contarlas después de generarlo, y no fiarse del valor pedido. Rango de dificultad orientativo: unas 30 pistas (fácil) hasta 24-26 (difícil). Por debajo de eso, la generación se ralentiza y rara vez llega.
 - Consecuencias: una única solución no implica que se pueda deducir sin probar; si en las pruebas de juego resultan injustos, habrá que valorar la opción 2. Con pocas pistas la generación se ralentiza, y `crear_puzzle_unico` puede devolver más pistas de las pedidas. Cuanto menos pistas, más lenta es la creación del piso.
+
+## DEC-009: Pruebas automáticas con un script de escena, sin librería externa
+
+- Fecha: 2026-11-23
+- Estado: Aceptada
+- Contexto: hay que comprobar de forma repetible que el generador produce tableros válidos y puzzles con solución única, y poder volver a ejecutarlo tras cada cambio.
+- Opciones consideradas:
+  1. Script de prueba en una escena propia (`pruebas_sudoku.tscn`) que genera muchos casos y muestra un resumen por consola: no requiere instalar nada y se entiende entero.
+  2. Una librería de pruebas para Godot (GUT o gdUnit4): informes más completos y ejecución desde línea de comandos, pero hay que instalarla y aprender su sintaxis.
+  3. Seguir probando a mano con un caso: lo más rápido, pero no detecta fallos poco frecuentes.
+- Decisión: opción 1. `es_tablero_valido` valida un tablero completo y el script `pruebas_sudoku.gd` comprueba validez, unicidad y coherencia. Incluye una prueba que verifica que el validador detecta un tablero roto.
+- Motivo: es la opción más sencilla que da confianza real, y deja el aprendizaje de una librería para cuando el proyecto tenga más sistemas que probar.
+- Consecuencias: las pruebas se ejecutan a mano con F6 y hay que mirar el resultado. Si el proyecto crece, conviene migrar a una librería. Comprobar la unicidad es lento, por eso se prueban pocos puzzles (`NUM_PUZZLES`).
