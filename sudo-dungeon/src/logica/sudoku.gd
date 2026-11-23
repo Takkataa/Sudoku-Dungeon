@@ -30,4 +30,27 @@ static func imprimir_tablero(tablero: Array) -> void:
 				texto += "| "
 			texto += str(tablero[fila][col]) + " "
 		print(texto)
- 
+
+# Devuelve true si "num" se puede colocar en (fila, col) sin romper
+# las reglas: no repetirse en su fila, columna ni bloque 3x3.
+static func es_valido(tablero: Array, fila: int , col: int, num: int) -> bool:
+	# 1. Fila: recorremos todas las columnas de esa fila
+	for c in range(TAMANO):
+		if tablero[fila][c]== num:
+			return false
+			
+	# 2. Columna: recorremos todas las filas de esa columna
+	for f in range(TAMANO):
+		if tablero[f][col] == num:
+			return false
+
+	# 3. Bloque 3x3: calculamos su esquina superior izquierda y lo recorremos
+	var inicio_fila := fila - (fila % TAMANO_BLOQUE)
+	var inicio_col := col - col % TAMANO_BLOQUE
+	for f in range(inicio_fila, inicio_fila + TAMANO_BLOQUE):
+		for c in range(inicio_col, inicio_col + TAMANO_BLOQUE):
+			if tablero[f][c] == num:
+				return false
+	
+	# Ninguna comprobación encontró el número: cabe
+	return true 
