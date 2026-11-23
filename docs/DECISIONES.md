@@ -130,3 +130,16 @@ Reglas:
 - Decisión: opción 1. `es_tablero_valido` valida un tablero completo y el script `pruebas_sudoku.gd` comprueba validez, unicidad y coherencia. Incluye una prueba que verifica que el validador detecta un tablero roto.
 - Motivo: es la opción más sencilla que da confianza real, y deja el aprendizaje de una librería para cuando el proyecto tenga más sistemas que probar.
 - Consecuencias: las pruebas se ejecutan a mano con F6 y hay que mirar el resultado. Si el proyecto crece, conviene migrar a una librería. Comprobar la unicidad es lento, por eso se prueban pocos puzzles (`NUM_PUZZLES`).
+
+## DEC-010: Versionado semántico 0.MINOR.PATCH con tags anotados en `main`
+
+- Fecha: 2026-11-23
+- Estado: Aceptada
+- Contexto: el proyecto avanza por hitos y hace falta poder volver a un punto estable concreto del código.
+- Opciones consideradas:
+  1. Tags anotados `vX.Y.Z` en `main` al cerrar cada hito, con versión `0.MINOR.PATCH` mientras no esté terminado: el historial queda dividido en etapas con nombre y se puede recuperar cualquier versión.
+  2. Sin tags, solo mensajes de commit: más simple, pero no hay forma clara de identificar versiones.
+  3. Una rama por versión: demasiado pesado para un proyecto de una sola persona.
+- Decisión: opción 1. Cada hito terminado produce un commit de cierre en `main` (CHANGELOG y ROADMAP) y se etiqueta después del merge. Se pasa a 1.0.0 cuando el juego esté completo.
+- Motivo: poco trabajo extra y mucho valor: permite volver atrás, comparar versiones y ver el progreso en GitHub.
+- Consecuencias: el tag se crea siempre sobre `main` ya actualizado, nunca sobre una rama de trabajo. Corregir un fallo de una versión ya etiquetada se publicará como `0.MINOR.PATCH+1`.
