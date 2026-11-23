@@ -109,3 +109,54 @@ static func crear_puzzle(solucion: Array, pistas: int) -> Array:
 		puzzle[pos.x][pos.y] = VACIA
 
 	return puzzle
+
+# Cuenta cuántas soluciones tiene el tablero, deteniéndose al llegar a "limite".
+# Modifica el tablero mientras prueba, pero lo deja como estaba al terminar.
+static func contar_soluciones(tablero: Array, limite: int = 2) -> int:
+	var celda := buscar_celda_vacia(tablero)
+
+	# Caso base: tablero completo = encontramos una solución
+	if celda.x == -1:
+		return 1
+
+	var total := 0
+	for num in range(1, TAMANO + 1):
+		if es_valido(tablero, celda.x, celda.y, num):
+			tablero[celda.x][celda.y] = num
+			total += contar_soluciones(tablero, limite - total)
+			tablero[celda.x][celda.y] = VACIA   # deshacemos siempre
+			if total >= limite:
+				break                           # ya hay suficientes, paramos
+
+	return total
+
+# Como crear_puzzle, pero solo vacía una celda si el puzzle sigue teniendo
+# una única solución. Si no se puede llegar a "pistas" sin perder la unicidad,
+# devuelve el puzzle con las pistas mínimas que logró.
+static func crear_puzzle_unico(solucion: Array, pistas: int) -> Array:
+	var total := TAMANO * TAMANO
+	pistas = clampi(pistas, 0, total)
+
+	var puzzle: Array = solucion.duplicate(true)
+
+	var posiciones: Array = []
+	for f in range(TAMANO):
+		for c in range(TAMANO):
+			posiciones.append(Vector2i(f, c))
+	posiciones.shuffle()
+
+	var pistas_actuales := total
+	for elemento in posiciones:
+		if pistas_actuales <= pistas:
+			break
+		var pos: Vector2i = elemento
+		var anterior: int = puzzle[pos.x][pos.y]
+		puzzle[pos.x][pos.y] = VACIA
+
+		# Con una copia, para que el conteo no toque nuestro puzzle
+		if contar_soluciones(puzzle.duplicate(true), 2) == 1:
+			pistas_actuales -= 1                    # sigue siendo único: la dejamos vacía
+		else:
+			puzzle[pos.x][pos.y] = anterior         # ya no es único: la restauramos
+
+	return puzzle

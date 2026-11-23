@@ -101,3 +101,19 @@ Reglas:
 - Decisión: opción 1. `crear_puzzle(solucion, pistas)` trabaja sobre `solucion.duplicate(true)` y vacía las primeras `81 - pistas` posiciones de una lista barajada. El número de pistas se limita con `clampi` al rango 0-81.
 - Motivo: garantiza el número exacto de pistas sin bucles de reintento, deja la solución sin tocar y permite ajustar la dificultad con un solo parámetro.
 - Consecuencias: quitar celdas al azar no asegura que el puzzle tenga una única solución. Eso se comprobará en el issue 6 con un contador de soluciones. Si se quisiera otra forma de elegir celdas (por ejemplo, simétrica), solo habría que cambiar cómo se construye la lista de posiciones.
+
+## DEC-008: Unicidad del puzzle comprobada contando soluciones con tope de 2
+
+- Fecha: 2026-11-22
+- Estado: Aceptada
+- Contexto: la mecánica central del juego es deducir qué hay en cada sala. Si el puzzle admite varias soluciones, la deducción deja de ser justa.
+- Opciones consideradas:
+  1. Contar soluciones con backtracking y detenerse al llegar a 2: reutiliza la lógica del generador, es fácil de entender y basta para distinguir "única" de "múltiple".
+  2. Resolver con técnicas lógicas humanas (candidatos únicos, parejas, etc.): garantiza que el puzzle se pueda deducir sin adivinar, pero es mucho más largo de programar.
+  3. No comprobar y aceptar cualquier puzzle: lo más simple, pero rompe la equidad de la mecánica.
+- Decisión: opción 1. `contar_soluciones(tablero, limite)` y `crear_puzzle_unico`, que vacía las celdas de una en una y devuelve la celda a su sitio si el puzzle deja de ser único.
+- Motivo: da la garantía mínima necesaria (una sola solución) con poco código y reaprovecha lo ya aprendido.
+- Aclaración (añadida el 2026-11-23): el número de pistas que se pide a `crear_puzzle_unico` es un **objetivo, no una garantía**. La función parte del tablero completo y va vaciando celdas una a una, devolviendo a su sitio las que harían perder la unicidad. Se detiene al alcanzar las pistas pedidas o al agotar todas las celdas, así que puede devolver más pistas de las pedidas (por ejemplo, pedir 20 y obtener 24 o 26). Lo que sí está garantizado es que el resultado siempre tiene una única solución.
+- Limitación conocida: el método es voraz (decide celda a celda sin mirar adelante) y depende del orden aleatorio, así que dos ejecuciones con el mismo objetivo pueden dar números de pistas distintos.
+- Uso en el juego: para saber cuántas pistas tiene realmente un puzzle, hay que contarlas después de generarlo, y no fiarse del valor pedido. Rango de dificultad orientativo: unas 30 pistas (fácil) hasta 24-26 (difícil). Por debajo de eso, la generación se ralentiza y rara vez llega.
+- Consecuencias: una única solución no implica que se pueda deducir sin probar; si en las pruebas de juego resultan injustos, habrá que valorar la opción 2. Con pocas pistas la generación se ralentiza, y `crear_puzzle_unico` puede devolver más pistas de las pedidas. Cuanto menos pistas, más lenta es la creación del piso.
